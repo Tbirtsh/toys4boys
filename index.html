@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Toys For Boys • Just Kidding Creations</title>
+  <meta name="description" content="An intentionally terrible (but secretly good) website by JustKiddingCreations.org. It's a joke. Please laugh responsibly." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🧸</text></svg>">
+  <style>
+    :root{
+      --bg: #000;
+      --fg: #00ffea;
+      --accent: #ff00aa;
+      --warn: #ffd400;
+    }
+    /* intentionally chaotic but usable */
+    html,body{height:100%;}
+    body{
+      margin:0; font-family: 'Comic Sans MS', 'Comic Sans', system-ui, sans-serif;
+      background-image: radial-gradient(circle at 20% 20%, rgba(255,0,170,.2), transparent 40%),
+                        radial-gradient(circle at 80% 10%, rgba(0,255,234,.2), transparent 45%),
+                        radial-gradient(circle at 30% 80%, rgba(255,212,0,.2), transparent 40%),
+                        repeating-linear-gradient(45deg, #111 0 10px, #0a0a0a 10px 20px);
+      color: var(--fg);
+      overflow-x:hidden;
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:16px;}
+    header{
+      position:sticky; top:0; z-index:9; backdrop-filter: blur(6px);
+      background: rgba(0,0,0,.7); border-bottom: 3px dashed var(--accent);
+    }
+    .logo{display:flex; align-items:center; gap:12px;}
+    .logo h1{margin:8px 0; font-size: clamp(26px, 4vw, 44px); text-shadow: 2px 2px 0 #f0f, -2px -2px 0 #0ff;}
+    nav{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 12px;}
+    .btn{
+      border: 3px ridge var(--fg); padding:8px 12px; cursor:pointer; background:#111; color:var(--fg);
+      text-transform:uppercase; letter-spacing:1px; font-weight:900; box-shadow:0 0 0 2px #111, 0 0 12px rgba(0,255,234,.3) inset;
+    }
+    .btn:hover{transform: translateY(-1px) rotate(-.5deg); box-shadow:0 0 16px rgba(255,0,170,.6);}
+    .marquee{white-space:nowrap; overflow:hidden; border:3px groove var(--warn); background:#130013; color:#fff;
+      text-shadow:0 0 6px var(--warn); font-weight:900;}
+    .marquee span{display:inline-block; padding:8px 16px; animation: scroll 18s linear infinite;}
+    @keyframes scroll{from{transform:translateX(100%)} to{transform:translateX(-100%)} }
+    main{padding:16px;}
+    section{display:none; animation: pop .25s ease-out;}
+    section.active{display:block;}
+    @keyframes pop { from{transform:scale(.98); opacity:.4} to{transform:scale(1); opacity:1} }
+    .card{
+      background: rgba(255,255,255,.03);
+      border: 3px double var(--fg);
+      padding: 16px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,.6);
+    }
+    .grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px;}
+    .toy{
+      background: #0a0a0a; border: 3px outset var(--accent); border-radius: 16px; padding: 12px; position:relative;
+    }
+    .toy h3{margin:8px 0 4px;}
+    .badge{position:absolute; top:-10px; right:-10px; background:var(--warn); color:#000; border:3px solid #000; padding:4px 8px; transform: rotate(10deg); font-weight:900;}
+    .blink{animation: blink 1s step-start infinite;}
+    @keyframes blink { 50%{ opacity:0 } }
+    .footer{
+      margin-top:40px; border-top:3px dashed var(--accent); padding:16px; font-size:14px; opacity:.9;
+    }
+    /* popup */
+    .modal{position:fixed; inset:0; display:none; place-items:center; background: rgba(0,0,0,.8); z-index: 100;}
+    .modal.open{display:grid;}
+    .modal .box{background:#111; border:4px solid var(--warn); padding:20px; max-width:560px; border-radius:16px;}
+    .counter{font-variant-numeric: tabular-nums;}
+    a{color:#ffd400}
+    a:hover{text-decoration:none;}
+    .tiny{font-size:12px; opacity:.8}
+
+    /* Updated sticky tip styles */
+    .tip-note {
+      position: fixed; /* Stays in place relative to the viewport */
+      background-color: #fce77a; /* Sticky note yellow */
+      color: #333;
+      border: 2px solid #a38d2f;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+      z-index: 50; /* Below modals, above general content */
+      width: 200px;
+      max-width: 80vw; /* Responsive width */
+      transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+      transform: rotate(calc(var(--rotation) * 1deg)); /* Apply random slight rotation */
+      cursor: default; /* Not clickable except for close button */
+    }
+    .tip-note p {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+      line-height: 1.4;
+      font-family: 'Comic Sans MS', 'Comic Sans', system-ui, sans-serif; /* Keep comic sans feel */
+    }
+    .tip-close {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: #c0c0c0;
+      border: 1px solid #888;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      color: #333;
+    }
+    .tip-close:hover {
+      background-color: #e0e0e0;
+    }
+    /* Loading spinner style */
+    .loading-spinner {
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #3498db;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Ask the Guru styles */
+    .guru-ask-section {
+      margin-top: 24px;
+      border-top: 3px dashed var(--fg);
+      padding-top: 16px;
+    }
+    .guru-ask-section textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 2px solid var(--fg);
+      background: #0a0a0a;
+      color: var(--fg);
+      font-family: 'Comic Sans MS', 'Comic Sans', system-ui, sans-serif;
+      border-radius: 8px;
+      resize: vertical; /* Allow vertical resizing */
+    }
+    .guru-response-box {
+      margin-top: 16px;
+      padding: 15px;
+      border: 3px double var(--warn);
+      background: rgba(255,212,0,.1);
+      border-radius: 12px;
+      font-style: italic;
+      color: var(--warn);
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .guru-response-box.hidden {
+        display: none;
+    }
+
+    /* New styles for explicit content page */
+    .explicit-toy {
+        background: #1a0a1a; /* Darker background */
+        border: 3px outset var(--accent); /* Same accent color */
+        border-radius: 16px;
+        padding: 12px;
+        position: relative;
+        text-align: center;
+        box-shadow: 0 0 15px rgba(255, 0, 170, 0.4); /* More glow */
+    }
+    .explicit-toy .emoji-icon {
+        font-size: 60px; /* Larger emojis */
+        margin-bottom: 8px;
+        filter: drop-shadow(0 0 5px var(--warn)); /* subtle glow on emoji */
+    }
+    .explicit-toy h3 {
+        margin: 8px 0 4px;
+        color: var(--fg);
+        text-shadow: 1px 1px 0 #f0f;
+    }
+    .explicit-toy p {
+        font-size: 15px;
+        color: rgba(0, 255, 234, 0.9);
+        margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="logo">
+        <div style="font-size:40px">🧸</div>
+        <h1>ToysForBoys<span class="blink">.org</span> <small style="font-size:.5em; color:#fff">by JustKiddingCreations.org</small></h1>
+      </div>
+      <div class="marquee"><span>🚨 LIMITED TIME OFFER: buy 1 imaginary wrench, get 0 free! • 💥 Ships nowhere, instantly! • 🧰 Professional-grade jokes only. Do not actually use. 🚨</span></div>
+      <nav>
+        <button class="btn" data-route="home">Home</button>
+        <button class="btn" data-route="catalog">Catalog</button>
+        <button class="btn" data-route="faq">FAQ</button>
+        <button class="btn" data-route="contact">Contact</button>
+        <button class="btn" data-route="adult">18+ Gate</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="home" class="active">
+      <div class="card">
+        <h2>Welcome, connoisseur of terrible web design.</h2>
+        <p>Behold a website so bad it loops back around to <em>art</em>. Sparkly, loud, but secretly accessible and fast. This is a parody site—no real products, no real sales, just vibes. ✨</p>
+        <p class="tiny">PSA: Nothing here is adult content. The 18+ gate is a joke mechanic and shows safety messaging only.</p>
+      </div>
+      <h2 style="margin-top:24px">Trending Totally-Real Products</h2>
+      <div class="grid">
+        <div class="toy">
+          <div class="badge">#1 Seller</div>
+          <div style="font-size:48px">🪛</div>
+          <h3>Left‑Handed Screwdriver</h3>
+          <p class="tagline">Engineered for right brains and wrong turns. Guaranteed to not fit any screws.</p>
+          <button class="btn" onclick="addToCart('Left-Handed Screwdriver')">Add to Cart (lol)</button>
+          <button class="btn" onclick="inventTagline(this, 'Left-Handed Screwdriver')">✨ Invent Tagline</button>
+        </div>
+        <div class="toy">
+          <div style="font-size:48px">🪠</div>
+          <h3>Wireless Plunger</h3>
+          <p class="tagline">No cables. No suction. No problem. Pairs via imaginary Bluetooth.</p>
+          <button class="btn" onclick="addToCart('Wireless Plunger')">Add to Cart (lol)</button>
+          <button class="btn" onclick="inventTagline(this, 'Wireless Plunger')">✨ Invent Tagline</button>
+        </div>
+        <div class="toy">
+          <div style="font-size:48px">🧻</div>
+          <h3>Quantum Duct Tape</h3>
+          <p class="tagline">It both sticks and doesn’t, until you look at it. Schrödinger would be proud.</p>
+          <button class="btn" onclick="addToCart('Quantum Duct Tape')">Add to Cart (lol)</button>
+          <button class="btn" onclick="inventTagline(this, 'Quantum Duct Tape')">✨ Invent Tagline</button>
+        </div>
+        <div class="toy">
+          <div class="badge">New!</div>
+          <div style="font-size:48px">🔧</div>
+          <h3>Invisi‑Wrench</h3>
+          <p class="tagline">Can’t find it? Exactly as designed.</p>
+          <button class="btn" onclick="addToCart('Invisi‑Wrench')">Add to Cart (lol)</button>
+          <button class="btn" onclick="inventTagline(this, 'Invisi‑Wrench')">✨ Invent Tagline</button>
+        </div>
+      </div>
+      <p class="tiny">Cart items go into your browser only. We can't see it. We also can't ship jokes.</p>
+    </section>
+
+    <section id="catalog">
+      <div class="card">
+        <h2>Catalog</h2>
+        <p>Browse our expertly curated nonsense. Click a thing; feel powerful.</p>
+      </div>
+      <div class="grid" id="catalogGrid"></div>
+    </section>
+
+    <section id="faq">
+      <div class="card">
+        <h2>FAQ</h2>
+        <details open>
+          <summary><strong>Is this a real store?</strong></summary>
+          <p>No. It's a comedy website. Please do not try to actually buy the wireless plunger.</p>
+        </details>
+        <details>
+          <summary><strong>Why does it look like 2003?</strong></summary>
+          <p>Because 2003 looked like <em>this</em> and it was perfect. Also we love marquees.</p>
+        </details>
+        <details>
+          <summary><strong>Do you collect data?</strong></summary>
+          <p>Only a fake visit counter stored in your own browser. We literally cannot see it.</p>
+        </details>
+        <details>
+          <summary><strong>Is there adult content?</strong></summary>
+          <p>No. The 18+ area is a compliance gag. It shows a safety message and stops there.</p>
+        </details>
+
+        <div class="guru-ask-section">
+            <h3>📿 Ask the Guru</h3>
+            <p>Seek enlightenment from the mystical guru! Ask a question, and receive wisdom (of sorts).</p>
+            <textarea id="guruQuestion" placeholder="E.g., What is the sound of one hand clapping?"></textarea>
+            <button class="btn" onclick="askTheGuru(this)">Ask the Guru</button>
+            <div id="guruResponse" class="guru-response-box hidden"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="card">
+        <h2>Contact</h2>
+        <p>Business inquiries: <a href="mailto:hey@justkiddingcreations.org">hey@justkiddingcreations.org</a></p>
+        <p>Media kit: coming never (or whenever).</p>
+        <p>Short link idea: <strong>t4b.justkiddingcreations.org</strong> or <strong>jk.to/boys</strong> (use your URL shortener of choice).</p>
+      </div>
+    </section>
+
+    <section id="adult">
+      <div class="card">
+        <h2>🔞 18+ Gate</h2>
+        <p>Before proceeding, confirm your age. No explicit content is hosted here; this page exists for humor and safety messaging only.</p>
+        <button class="btn" onclick="openAgeGate()">I am 18 or older</button>
+        <button class="btn" onclick="denyAgeGate()">I am under 18</button>
+        <div id="minorBlock" style="display:none; margin-top:16px" class="tiny">
+          <p><strong>Heads up:</strong> Some stuff on the internet isn’t for minors. You did the right thing. Enjoy the rest of the site ✨</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- New Section for 18+ Explicit Joke Content -->
+    <section id="explicitContentPage">
+        <div class="card">
+            <h2>🎉 Welcome, Esteemed Adult!</h2>
+            <p>You've unlocked the secret realm of... well, *more jokes*! Behold our truly inappropriate collection of items, designed exclusively for those who appreciate the finer, sillier side of adult humor. Absolutely no actual adult content, just laughs. 😉</p>
+        </div>
+        <h2 style="margin-top:24px">Our Top-Secret Adult Toys (Not Really)</h2>
+        <div class="grid" id="explicitToyGrid">
+            <!-- Explicit joke items will be dynamically loaded here -->
+        </div>
+        <p class="tiny" style="margin-top:24px;">Remember, these are all jokes. Please laugh responsibly and do not attempt to actually use any of these imaginary items.</p>
+    </section>
+
+
+    <div class="footer">
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+        <div>© <span id="year"></span> ToysForBoys (a Just Kidding Creations joke)</div>
+        <div>• Visitor # <span id="visits" class="counter">0</span></div>
+        <div>• <a href="#" onclick="secret()">Developer Mode</a></div>
+      </div>
+      <div class="tiny">Made with 💖, duct tape, and zero venture capital.</div>
+    </div>
+  </main>
+
+  <div class="modal" id="ageModal" aria-modal="true" role="dialog">
+    <div class="box">
+      <h3>🔞 Confirm your age</h3>
+      <p>This site does not host explicit content. If you are 18+, you can view a short safety message. If not, we’ll take you back home.</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+        <button class="btn" onclick="confirmAdult()">I am 18+</button>
+        <button class="btn" onclick="denyAgeGate()">I am under 18</button>
+        <button class="btn" onclick="closeAgeGate()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom message box modal -->
+  <div class="modal" id="messageBoxModal" aria-modal="true" role="dialog">
+    <div class="box">
+      <h3 id="messageBoxTitle"></h3>
+      <p id="messageBoxContent"></p>
+      <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+        <button class="btn" onclick="closeMessageBox()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ** IMPORTANT: Replace with your actual Cloudflare Worker URL **
+    // Example: const VISITOR_COUNT_WORKER_URL = "https://toys-for-boys-counter.your-username.workers.dev";
+    const VISITOR_COUNT_WORKER_URL = "https://toysforboyscount.afedel.workers.dev/"; 
+
+    // simple router
+    const sections = [...document.querySelectorAll('main section')];
+    const open = (id)=>{
+      sections.forEach(s=>s.classList.toggle('active', s.id===id));
+      window.scrollTo({top:0, behavior:'smooth'});
+    };
+    document.querySelectorAll('[data-route]').forEach(btn=>{
+      btn.addEventListener('click',()=>open(btn.dataset.route));
+    });
+
+    // year update
+    document.getElementById('year').textContent = new Date().getFullYear();
+    
+    // ** REAL VISITOR COUNT LOGIC **
+    // This function will fetch the real visitor count from your Cloudflare Worker
+    async function updateVisitorCount() {
+        const visitsElement = document.getElementById('visits');
+        visitsElement.textContent = 'Loading...'; // Show loading state
+
+        try {
+            const response = await fetch(VISITOR_COUNT_WORKER_URL);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            if (data && data.count !== undefined) {
+                visitsElement.textContent = data.count.toString().padStart(6,'0');
+            } else {
+                console.error('Worker response missing count:', data);
+                visitsElement.textContent = 'ERROR';
+            }
+        } catch (error) {
+            console.error('Failed to fetch visitor count:', error);
+            visitsElement.textContent = 'ERROR';
+            showMessageBox('Error', 'Could not load visitor count. Please check your internet connection or the Cloudflare Worker setup.');
+        }
+    }
+
+    // Call the function to update the visitor count on page load
+    window.addEventListener('load', updateVisitorCount);
+
+
+    // Array of predefined items. Each item includes an icon, name, and an initial tagline.
+    const items = [
+      {icon:'🪚', name:'USB Chainsaw (No Cable)', tagline:'Charges on vibes only'},
+      {icon:'🧲', name:'Reverse Magnet', tagline:'Pushes metal away. Science?'},
+      {icon:'🧯', name:'Pocket Fire Extinguisher (Sticker)', tagline:'For emotional fires only'},
+      {icon:'🛠️', name:'Multi‑Tool (Single Tool Edition)', tagline:'It’s just a hammer'},
+      {icon:'🪤', name:'Mouse Trap (Bluetooth)', tagline:'Connects to nothing'},
+      {icon:'🧪', name:'AI Sauce', tagline:'Now with 20% more buzzwords'},
+      {icon:'🪄', name:'Bug Fix Wand', tagline:'Wave at code until working'},
+      {icon:'📦', name:'Mystery Box', tagline:'Contains mysteries'},
+    ];
+
+    const grid = document.getElementById('catalogGrid');
+    // Function to render the product grid
+    function renderCatalogGrid() {
+      grid.innerHTML = items.map(item => `
+        <div class="toy">
+          <div class="badge">wow</div>
+          <div style="font-size:48px">${item.icon}</div>
+          <h3>${item.name}</h3>
+          <p class="tagline">${item.tagline}</p>
+          <button class="btn" onclick="addToCart('${item.name.replace(/'/g, "&#39;")}')">Add to Cart (lol)</button>
+          <button class="btn" onclick="inventTagline(this, '${item.name.replace(/'/g, "&#39;")}')">✨ Invent Tagline</button>
+        </div>
+      `).join('');
+    }
+    // Initial render of the catalog
+    renderCatalogGrid();
+
+    // cart (updated to use custom message box instead of alert)
+    function addToCart(name){
+      showMessageBox('Cart (lol)', 'Added to cart: '+name+'\nJust kidding, we don\'t sell anything.');
+    }
+
+    // 18+ gate logic (updated to open explicit content page)
+    const ageModal = document.getElementById('ageModal');
+    function openAgeGate(){ ageModal.classList.add('open'); }
+    function closeAgeGate(){ ageModal.classList.remove('open'); }
+    function confirmAdult(){
+      closeAgeGate();
+      // Directly open the explicit content page
+      open('explicitContentPage');
+      // Hide the minor block if it was previously shown
+      document.getElementById('minorBlock').style.display='none';
+    }
+    function denyAgeGate(){
+      closeAgeGate();
+      document.getElementById('minorBlock').style.display='block';
+      open('home'); // Redirects to home for minors
+    }
+
+    // silly easter egg (updated to use custom message box instead of alert)
+    let clicks=0;
+    function secret(){
+      clicks++;
+      if(clicks%3===0){
+        showMessageBox('Developer Mode', 'Developer Mode unlocked! (There is no developer mode.)');
+      }
+    }
+
+    // --- Custom Message Box ---
+
+    const messageBoxModal = document.getElementById('messageBoxModal');
+    const messageBoxTitle = document.getElementById('messageBoxTitle');
+    const messageBoxContent = document.getElementById('messageBoxContent');
+    let messageBoxCallback = null;
+
+    function showMessageBox(title, message, callback = null) {
+      messageBoxTitle.textContent = title;
+      messageBoxContent.textContent = message;
+      messageBoxCallback = callback;
+      messageBoxModal.classList.add('open');
+    }
+
+    function closeMessageBox() {
+      messageBoxModal.classList.remove('open');
+      if (messageBoxCallback) {
+        messageBoxCallback();
+        messageBoxCallback = null; // Clear callback after use
+      }
+    }
+
+    // --- Gemini API Integration: Product Description Generator ---
+
+    async function inventTagline(buttonElement, productName) {
+      const originalButtonText = buttonElement.textContent;
+      const originalTaglineElement = buttonElement.closest('.toy').querySelector('.tagline');
+      const originalTagline = originalTaglineElement.textContent;
+
+      buttonElement.disabled = true;
+      buttonElement.innerHTML = `Generating... <span class="loading-spinner"></span>`;
+
+      let chatHistory = [];
+      const prompt = `Generate a single, extremely absurd, comically over-the-top, and slightly nonsensical marketing tagline (1-2 sentences) for an imaginary product called '${productName}' on a parody website called 'ToysForBoys.org' that sells useless, joke tools. Make it sound like it's trying way too hard to be impressive, but is utterly pointless.`;
+      chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+      const payload = { contents: chatHistory };
+      const apiKey = "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+      let retryCount = 0;
+      const maxRetries = 3;
+      const baseDelay = 1000;
+
+      while (retryCount < maxRetries) {
+        try {
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) {
+            if (response.status === 429) {
+              const delay = baseDelay * Math.pow(2, retryCount);
+              console.warn(`Rate limit hit. Retrying in ${delay / 1000}s...`);
+              await new Promise(res => setTimeout(res, delay));
+              retryCount++;
+              continue;
+            } else {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+          }
+
+          const result = await response.json();
+
+          if (result.candidates && result.candidates.length > 0 &&
+              result.candidates[0].content && result.candidates[0].content.parts &&
+              result.candidates[0].content.parts.length > 0) {
+            const newTagline = result.candidates[0].content.parts[0].text;
+            originalTaglineElement.textContent = newTagline;
+            break;
+          } else {
+            console.error('Gemini API response structure unexpected:', result);
+            showMessageBox('API Error', 'Could not generate a new tagline. Unexpected response from API.');
+            originalTaglineElement.textContent = originalTagline;
+            break;
+          }
+        } catch (error) {
+          console.error('Error generating tagline:', error);
+          if (retryCount < maxRetries - 1) {
+            const delay = baseDelay * Math.pow(2, retryCount);
+            console.warn(`Attempt ${retryCount + 1} failed. Retrying in ${delay / 1000}s...`);
+            await new Promise(res => setTimeout(res, delay));
+            retryCount++;
+          } else {
+            showMessageBox('API Error', 'Failed to generate a new tagline after multiple attempts. Please try again later.');
+            originalTaglineElement.textContent = originalTagline;
+            break;
+          }
+        } finally {
+          buttonElement.disabled = false;
+          buttonElement.innerHTML = originalButtonText;
+        }
+      }
+    }
+
+    // --- Sticky Tips (original joke content, reduced quantity) ---
+
+    const mildAdultJokes = [
+      "My therapist told me to embrace my flaws. So I gave them a hug and then asked for money.",
+      "Being an adult is mostly googling 'how to adult' and hoping for the best.",
+      "I’ve finally reached the age where my brain goes from 'you probably shouldn't' to 'I wonder if it's worth the paperwork.'",
+      "My 'to-do' list has reached an impressive length. It's mostly just 'don't die'.",
+      "I'm not lazy, I'm just on energy-saving mode.",
+      "I'm at that age where my back goes out more than I do.",
+      "I've got a bad case of the 'I don't wanna's today.",
+      "My bank account is just a joke. The punchline is 'insufficient funds'.",
+      "My ability to remember song lyrics from the 90s far exceeds my ability to remember why I walked into this room.",
+      "I’m fluent in three languages: English, Sarcasm, and Profanity (only when really necessary)."
+    ];
+
+    function getRandomArbitrary(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function createStickyTip() {
+      const joke = mildAdultJokes[Math.floor(Math.random() * mildAdultJokes.length)];
+
+      const tipNote = document.createElement('div');
+      tipNote.className = 'tip-note';
+      tipNote.style.setProperty('--rotation', getRandomArbitrary(-5, 5));
+
+      const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+      const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+      const leftPercent = getRandomArbitrary(5, 75);
+      const topPercent = getRandomArbitrary(10, 80);
+
+      tipNote.style.left = `${leftPercent}vw`;
+      tipNote.style.top = `${topPercent}vh`;
+
+      const jokeText = document.createElement('p');
+      jokeText.textContent = joke;
+      tipNote.appendChild(jokeText);
+
+      const closeButton = document.createElement('button');
+      closeButton.className = 'tip-close';
+      closeButton.textContent = 'x';
+      closeButton.ariaLabel = 'Close tip';
+      closeButton.onclick = () => {
+        tipNote.style.opacity = '0';
+        tipNote.style.transform = 'scale(0.8) rotate(calc(var(--rotation) * 1deg))';
+        setTimeout(() => tipNote.remove(), 200);
+      };
+      tipNote.appendChild(closeButton);
+
+      document.body.appendChild(tipNote);
+    }
+
+    window.addEventListener('load', () => {
+      const numberOfTips = Math.floor(Math.random() * 2) + 1; // Generates 1 or 2 tips
+      for (let i = 0; i < numberOfTips; i++) {
+        createStickyTip();
+      }
+    });
+
+    // --- "Ask the Guru" Feature for FAQ Page ---
+    const guruQuestionInput = document.getElementById('guruQuestion');
+    const guruResponseDiv = document.getElementById('guruResponse');
+
+    async function askTheGuru(buttonElement) {
+        const question = guruQuestionInput.value.trim();
+        if (!question) {
+            showMessageBox('Guru Says:', 'Even the guru needs a question to ponder. Please type something!');
+            return;
+        }
+
+        const originalButtonText = buttonElement.textContent;
+        buttonElement.disabled = true;
+        buttonElement.innerHTML = `Meditating... <span class="loading-spinner"></span>`;
+        guruResponseDiv.classList.remove('hidden');
+        guruResponseDiv.textContent = 'The Guru is pondering...';
+
+        let chatHistory = [];
+        const guruPrompt = `As a supremely enlightened, yet comically absurd and nonsensical guru on a parody website called 'ToysForBoys.org', provide a short (1-3 sentences) pseudo-philosophical, profound-sounding, but ultimately useless and humorous answer to the following question: "${question}". Make it sound like profound wisdom but for a joke.`;
+        chatHistory.push({ role: "user", parts: [{ text: guruPrompt }] });
+        const payload = { contents: chatHistory };
+        const apiKey = "";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+        let retryCount = 0;
+        const maxRetries = 3;
+        const baseDelay = 1000;
+
+        while (retryCount < maxRetries) {
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    if (response.status === 429) {
+                        const delay = baseDelay * Math.pow(2, retryCount);
+                        console.warn(`Guru API: Rate limit hit. Retrying in ${delay / 1000}s...`);
+                        await new Promise(res => setTimeout(res, delay));
+                        retryCount++;
+                        continue;
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    guruResponseDiv.textContent = result.candidates[0].content.parts[0].text;
+                    break;
+                } else {
+                    console.error('Guru API: Response structure unexpected:', result);
+                    guruResponseDiv.textContent = "The guru's wisdom is... currently unavailable. Try asking again, or perhaps consult a real manual.";
+                    break;
+                }
+            } catch (error) {
+                console.error('Guru API: Error generating response:', error);
+                if (retryCount < maxRetries - 1) {
+                    const delay = baseDelay * Math.pow(2, retryCount);
+                    console.warn(`Guru API: Attempt ${retryCount + 1} failed. Retrying in ${delay / 1000}s...`);
+                    await new Promise(res => setTimeout(res, delay));
+                    retryCount++;
+                } else {
+                    guruResponseDiv.textContent = "The guru is lost in thought. Or the internet is. Either way, try again later.";
+                    break;
+                }
+            } finally {
+                buttonElement.disabled = false;
+                buttonElement.innerHTML = originalButtonText;
+            }
+        }
+    }
+
+    // --- New 18+ Explicit Joke Content Data and Rendering ---
+
+    const explicitJokeItems = [
+        { icon: '🍑', name: 'The Backdoor Policy Manual', description: 'Comprehensive guide to unexpected entries and exits. Batteries not included, just complex regulations.', price: 'Free (with purchase of wisdom)' },
+        { icon: '🍆', name: 'Infinite Expansion Wand', description: 'Guaranteed to increase in size... metaphorically, of course. For those who believe in magic tricks.', price: 'Priceless' },
+        { icon: '💦', name: 'Lubricant of Loud Laughter', description: 'Reduces friction in social situations. Apply liberally for maximum awkward chuckles.', price: 'BYOL (Bring Your Own Laughter)' },
+        { icon: '🍒', name: 'Cherry Popper 5000', description: 'A highly advanced device for opening stubborn jars. Also, it\'s red and shiny.', price: 'Collector\'s Item' },
+        { icon: '🍩', name: 'The Glazed Ring of Power', description: 'One ring to rule them all, especially on cheat days. May lead to excessive sugar rushes.', price: 'Worth its weight in sprinkles' },
+        { icon: '👅', name: 'The Silent Whistle', description: 'For summoning service when you don\'t want to use your voice. Highly effective for getting attention... sometimes.', price: 'Speak to your inner child' },
+        { icon: '🤝', name: 'The Firm Handshake Device', description: 'Ensures a confident grip in all business negotiations. Not for actual hand-holding.', price: 'Solid Investment' },
+        { icon: '🔥', name: 'The Burning Desire Extinguisher', description: 'Quickly puts out those inconvenient urges to do actual work. For professional procrastinators.', price: 'Essential for Netflix binging' },
+        { icon: '🚀', name: 'Personal Thruster Pack', description: 'Experience exhilarating vertical ascension... from your couch to the fridge. Fuel is optional.', price: 'Unlimited flights of fancy' },
+        { icon: '🍌', name: 'The Banana Hammock (Miniature)', description: 'A tiny hammock for your tiny, decorative bananas. Perfect for desk decor.', price: 'Small but mighty' },
+        { icon: '🎈', name: 'The Inflatable Ego Booster', description: 'Just add air! Watch your self-esteem inflate, then deflate slowly over time. Reusable!', price: 'A breath of fresh air' },
+        { icon: '🧦', name: 'The Missing Sock Locator', description: 'Guaranteed to NOT find the other sock. Its purpose is to confirm the universe\'s sense of humor.', price: 'Infinite Loops of Mystery' }
+    ];
+
+    function renderExplicitJokeGrid() {
+        const explicitToyGrid = document.getElementById('explicitToyGrid');
+        explicitToyGrid.innerHTML = explicitJokeItems.map(item => `
+            <div class="explicit-toy">
+                <div class="emoji-icon">${item.icon}</div>
+                <h3>${item.name}</h3>
+                <p>${item.description}</p>
+                <p><strong>Price:</strong> ${item.price}</p>
+                <button class="btn" onclick="addToCart('${item.name.replace(/'/g, "&#39;")}')">Add to Cart (Seriously, lol)</button>
+            </div>
+        `).join('');
+    }
+
+    // Call this function when the page loads (or when the explicit section is opened)
+    // For simplicity, we'll render it on load and then toggle visibility via the router.
+    window.addEventListener('load', renderExplicitJokeGrid);
+
+  </script>
+</body>
+</html>
