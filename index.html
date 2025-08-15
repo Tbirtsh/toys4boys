@@ -51,6 +51,10 @@
       padding: 16px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,.6);
     }
     .grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px;}
+    /* Added for consistent vertical spacing within grids */
+    .grid > div {
+        margin-bottom: 20px;
+    }
     .toy{
       background: #0a0a0a; border: 3px outset var(--accent); border-radius: 16px; padding: 12px; position:relative;
     }
@@ -113,8 +117,8 @@
     .tip-close:hover {
       background-color: #e0e0e0;
     }
-    /* Loading spinner style */
-    .loading-spinner {
+    /* Removed .loading-spinner as AI features are removed */
+    /* .loading-spinner {
       border: 2px solid #f3f3f3;
       border-top: 2px solid #3498db;
       border-radius: 50%;
@@ -129,10 +133,10 @@
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
-    }
+    } */
 
-    /* Ask the Guru styles */
-    .guru-ask-section {
+    /* Removed Ask the Guru styles as AI features are removed */
+    /* .guru-ask-section {
       margin-top: 24px;
       border-top: 3px dashed var(--fg);
       padding-top: 16px;
@@ -147,7 +151,7 @@
       color: var(--fg);
       font-family: 'Comic Sans MS', 'Comic Sans', system-ui, sans-serif;
       border-radius: 8px;
-      resize: vertical; /* Allow vertical resizing */
+      resize: vertical;
     }
     .guru-response-box {
       margin-top: 16px;
@@ -165,6 +169,27 @@
     }
     .guru-response-box.hidden {
         display: none;
+    } */
+
+    /* Styles for cart items */
+    .cart-item {
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px dashed var(--fg);
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .cart-item span {
+        font-weight: bold;
+    }
+    .cart-empty-message {
+        text-align: center;
+        margin-top: 20px;
+        font-style: italic;
+        opacity: 0.8;
     }
 
     /* New styles for explicit content page */
@@ -201,10 +226,11 @@
         <div style="font-size:40px">🧸</div>
         <h1>ToysForBoys<span class="blink">.org</span> <small style="font-size:.5em; color:#fff">by JustKiddingCreations.org</small></h1>
       </div>
-      <div class="marquee"><span>🚨 LIMITED TIME OFFER: $1 FOR $2 AND A DRINK! • 💥 Ships nowhere, instantly! • 🧰 Professional-grade jokes only. Do not actually use. 🚨</span></div>
+      <div class="marquee"><span>🚨 LIMITED TIME OFFER: buy 1 imaginary wrench, get 0 free! • 💥 Ships nowhere, instantly! • 🧰 Professional-grade jokes only. Do not actually use. 🚨</span></div>
       <nav>
         <button class="btn" data-route="home">Home</button>
         <button class="btn" data-route="catalog">Catalog</button>
+        <button class="btn" data-route="cart">Cart <span id="cartCount" style="font-weight:normal;">(0)</span></button>
         <button class="btn" data-route="faq">FAQ</button>
         <button class="btn" data-route="contact">Contact</button>
         <button class="btn" data-route="adult">18+ Gate</button>
@@ -226,30 +252,26 @@
           <div style="font-size:48px">🪛</div>
           <h3>Left‑Handed Screwdriver</h3>
           <p class="tagline">Engineered for right brains and wrong turns. Guaranteed to not fit any screws.</p>
-          <button class="btn" onclick="addToCart('Left-Handed Screwdriver')">Add to Cart (lol)</button>
-          <button class="btn" onclick="inventTagline(this, 'Left-Handed Screwdriver')">✨ Invent Tagline</button>
+          <button class="btn" onclick="addToCart({name:'Left-Handed Screwdriver', price:'$0.99'})">Add to Cart</button>
         </div>
         <div class="toy">
           <div style="font-size:48px">🪠</div>
           <h3>Wireless Plunger</h3>
           <p class="tagline">No cables. No suction. No problem. Pairs via imaginary Bluetooth.</p>
-          <button class="btn" onclick="addToCart('Wireless Plunger')">Add to Cart (lol)</button>
-          <button class="btn" onclick="inventTagline(this, 'Wireless Plunger')">✨ Invent Tagline</button>
+          <button class="btn" onclick="addToCart({name:'Wireless Plunger', price:'$19.99'})">Add to Cart</button>
         </div>
         <div class="toy">
           <div style="font-size:48px">🧻</div>
           <h3>Quantum Duct Tape</h3>
           <p class="tagline">It both sticks and doesn’t, until you look at it. Schrödinger would be proud.</p>
-          <button class="btn" onclick="addToCart('Quantum Duct Tape')">Add to Cart (lol)</button>
-          <button class="btn" onclick="inventTagline(this, 'Quantum Duct Tape')">✨ Invent Tagline</button>
+          <button class="btn" onclick="addToCart({name:'Quantum Duct Tape', price:'$5.50'})">Add to Cart</button>
         </div>
         <div class="toy">
           <div class="badge">New!</div>
           <div style="font-size:48px">🔧</div>
           <h3>Invisi‑Wrench</h3>
           <p class="tagline">Can’t find it? Exactly as designed.</p>
-          <button class="btn" onclick="addToCart('Invisi‑Wrench')">Add to Cart (lol)</button>
-          <button class="btn" onclick="inventTagline(this, 'Invisi‑Wrench')">✨ Invent Tagline</button>
+          <button class="btn" onclick="addToCart({name:'Invisi‑Wrench', price:'$25.00'})">Add to Cart</button>
         </div>
       </div>
       <p class="tiny">Cart items go into your browser only. We can't see it. We also can't ship jokes.</p>
@@ -257,10 +279,22 @@
 
     <section id="catalog">
       <div class="card">
-        <h2>Catalog</h2>
-        <p>Browse our expertly curated nonsense. Click a thing; feel powerful.</p>
+        <h2>Catalog of Glorious Nonsense</h2>
+        <p>Behold our full collection of intentionally useless wonders. Each click is a journey into hilarity!</p>
       </div>
       <div class="grid" id="catalogGrid"></div>
+    </section>
+
+    <section id="cart">
+        <div class="card">
+            <h2>🛒 Your (Joke) Shopping Cart</h2>
+            <p>These are the imaginary items you've added. They exist only in your browser's local storage and our hearts.</p>
+            <div id="cartItems">
+                <!-- Cart items will be rendered here -->
+            </div>
+            <div id="cartTotal" style="margin-top: 15px; font-weight: bold; font-size: 1.2em;"></div>
+            <button class="btn" onclick="clearCart()" style="margin-top: 20px;">Clear Cart</button>
+        </div>
     </section>
 
     <section id="faq">
@@ -276,20 +310,12 @@
         </details>
         <details>
           <summary><strong>Do you collect data?</strong></summary>
-          <p>Only a fake visit counter stored in your own browser. We literally cannot see it.</p>
+          <p>Only a fake visit counter stored in your own browser. We literally cannot see it. Your cart is saved only on your device.</p>
         </details>
         <details>
           <summary><strong>Is there adult content?</strong></summary>
-          <p>No. The 18+ area is a compliance gag. It shows a safety message and stops there.</p>
+          <p>No. The 18+ area is a compliance gag. It shows a safety message and then some *very* silly, non-explicit adult jokes.</p>
         </details>
-
-        <div class="guru-ask-section">
-            <h3>📿 Ask the Guru</h3>
-            <p>Seek enlightenment from the mystical guru! Ask a question, and receive wisdom (of sorts).</p>
-            <textarea id="guruQuestion" placeholder="E.g., What is the sound of one hand clapping?"></textarea>
-            <button class="btn" onclick="askTheGuru(this)">Ask the Guru</button>
-            <div id="guruResponse" class="guru-response-box hidden"></div>
-        </div>
       </div>
     </section>
 
@@ -334,7 +360,6 @@
         <div>• Visitor # <span id="visits" class="counter">0</span></div>
         <div>• <a href="#" onclick="secret()">Developer Mode</a></div>
       </div>
-      <div class="tiny">Made with 💖, duct tape, and zero venture capital.</div>
     </div>
   </main>
 
@@ -362,14 +387,17 @@
   </div>
 
   <script>
-    // ** IMPORTANT: Replace with your actual Cloudflare Worker URL **
-    // Example: const VISITOR_COUNT_WORKER_URL = "https://toys-for-boys-counter.your-username.workers.dev";
+    // ** IMPORTANT: This URL points to your Cloudflare Worker that handles the visitor count. **
     const VISITOR_COUNT_WORKER_URL = "https://toysforboyscount.afedel.workers.dev/"; 
 
     // simple router
     const sections = [...document.querySelectorAll('main section')];
     const open = (id)=>{
       sections.forEach(s=>s.classList.toggle('active', s.id===id));
+      // If navigating to the cart, render it
+      if (id === 'cart') {
+          renderCart();
+      }
       window.scrollTo({top:0, behavior:'smooth'});
     };
     document.querySelectorAll('[data-route]').forEach(btn=>{
@@ -380,10 +408,9 @@
     document.getElementById('year').textContent = new Date().getFullYear();
     
     // ** REAL VISITOR COUNT LOGIC **
-    // This function will fetch the real visitor count from your Cloudflare Worker
     async function updateVisitorCount() {
         const visitsElement = document.getElementById('visits');
-        visitsElement.textContent = 'Loading...'; // Show loading state
+        visitsElement.textContent = 'Loading...';
 
         try {
             const response = await fetch(VISITOR_COUNT_WORKER_URL);
@@ -404,20 +431,23 @@
         }
     }
 
-    // Call the function to update the visitor count on page load
     window.addEventListener('load', updateVisitorCount);
 
 
     // Array of predefined items. Each item includes an icon, name, and an initial tagline.
     const items = [
-      {icon:'🪚', name:'USB Chainsaw (No Cable)', tagline:'Charges on vibes only'},
-      {icon:'🧲', name:'Reverse Magnet', tagline:'Pushes metal away. Science?'},
-      {icon:'🧯', name:'Pocket Fire Extinguisher (Sticker)', tagline:'For emotional fires only'},
-      {icon:'🛠️', name:'Multi‑Tool (Single Tool Edition)', tagline:'It’s just a hammer'},
-      {icon:'🪤', name:'Mouse Trap (Bluetooth)', tagline:'Connects to nothing'},
-      {icon:'🧪', name:'AI Sauce', tagline:'Now with 20% more buzzwords'},
-      {icon:'🪄', name:'Bug Fix Wand', tagline:'Wave at code until working'},
-      {icon:'📦', name:'Mystery Box', tagline:'Contains mysteries'},
+      {icon:'🪚', name:'Left‑Handed Screwdriver', tagline:'Engineered for right brains and wrong turns. Guaranteed to not fit any screws.', price:'$0.99'},
+      {icon:'🪠', name:'Wireless Plunger', tagline:'No cables. No suction. No problem. Pairs via imaginary Bluetooth.', price:'$19.99'},
+      {icon:'🧻', name:'Quantum Duct Tape', tagline:'It both sticks and doesn’t, until you look at it. Schrödinger would be proud.', price:'$5.50'},
+      {icon:'🔧', name:'Invisi‑Wrench', tagline:'Can’t find it? Exactly as designed.', price:'$25.00'},
+      // New Items added to normal catalog
+      {icon:'💧', name:'Double-Sided Non-Stick Glue', tagline:'Bonds nothing to nothing, perfectly. The ultimate paradox in a bottle!', price:'$7.77'},
+      {icon:'🧤', name:'4 Finger Glove (No Thumb)', tagline:'Designed for... unique hand anatomies. Perfect for high-fives with three friends!', price:'$4.00'},
+      {icon:'🛋️', name:'Single-Use Deflatable Couch', tagline:'Inflates for comfort, then permanently deflates for instant disposal. Eco-unfriendly and proud!', price:'$149.99'},
+      {icon:'🧩', name:'A Puzzle With No Fitting Pieces', tagline:'Experience true frustration as every piece defies assembly. Mindfulness through futility!', price:'$12.34'},
+      {icon:'🚲', name:'Bike That Pedals Backwards', tagline:'Propel yourself into the past, or just confuse everyone. Great for competitive un-cycling!', price:'$299.99'},
+      {icon:'🥄', name:'Dissolvable Spoons (Cereal Edition)', tagline:'Enjoy your cereal, then watch your spoon vanish! For a truly immersive eating experience.', price:'$3.00'},
+      {icon:'🚗', name:'Manual Car (Drive, Reverse, and 1st)', tagline:'All the thrill of manual, none of the gears beyond the essentials. Good luck on the highway!', price:'$9999.00'}
     ];
 
     const grid = document.getElementById('catalogGrid');
@@ -429,18 +459,85 @@
           <div style="font-size:48px">${item.icon}</div>
           <h3>${item.name}</h3>
           <p class="tagline">${item.tagline}</p>
-          <button class="btn" onclick="addToCart('${item.name.replace(/'/g, "&#39;")}')">Add to Cart (lol)</button>
-          <button class="btn" onclick="inventTagline(this, '${item.name.replace(/'/g, "&#39;")}')">✨ Invent Tagline</button>
+          <button class="btn" onclick="addToCart(${JSON.stringify(item).replace(/'/g, "&#39;")})">Add to Cart</button>
         </div>
       `).join('');
     }
     // Initial render of the catalog
     renderCatalogGrid();
 
-    // cart (updated to use custom message box instead of alert)
-    function addToCart(name){
-      showMessageBox('Cart (lol)', 'Added to cart: '+name+'\nJust kidding, we don\'t sell anything.');
+    // ** REAL SHOPPING CART LOGIC (Local Storage) **
+    const CART_STORAGE_KEY = 'toysForBoysCart';
+    const cartCountElement = document.getElementById('cartCount');
+    const cartItemsElement = document.getElementById('cartItems');
+    const cartTotalElement = document.getElementById('cartTotal');
+
+    function getCart() {
+        try {
+            const cartString = localStorage.getItem(CART_STORAGE_KEY);
+            return cartString ? JSON.parse(cartString) : [];
+        } catch (e) {
+            console.error("Error reading cart from localStorage:", e);
+            return [];
+        }
     }
+
+    function saveCart(cart) {
+        try {
+            localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+            updateCartCountDisplay();
+        } catch (e) {
+            console.error("Error saving cart to localStorage:", e);
+            showMessageBox('Cart Error', 'Could not save cart. Your browser might be full or in private mode.');
+        }
+    }
+
+    function addToCart(item) {
+        let cart = getCart();
+        cart.push(item);
+        saveCart(cart);
+        showMessageBox('Added to Cart!', `${item.name} has been added to your joke cart!`);
+    }
+
+    function clearCart() {
+        saveCart([]); // Save an empty array
+        renderCart(); // Re-render the cart display
+        showMessageBox('Cart Cleared!', 'Your joke cart is now empty. Time to fill it with more nonsense!');
+    }
+
+    function renderCart() {
+        const cart = getCart();
+        cartItemsElement.innerHTML = ''; // Clear previous items
+        let total = 0;
+
+        if (cart.length === 0) {
+            cartItemsElement.innerHTML = '<p class="cart-empty-message">Your cart is currently filled with... air!</p>';
+        } else {
+            cart.forEach((item, index) => {
+                const itemPrice = parseFloat(item.price.replace('$', '')) || 0;
+                total += itemPrice;
+
+                const cartItemDiv = document.createElement('div');
+                cartItemDiv.className = 'cart-item';
+                cartItemDiv.innerHTML = `
+                    <span>${item.icon || '📦'} ${item.name}</span>
+                    <span>${item.price}</span>
+                `;
+                cartItemsElement.appendChild(cartItemDiv);
+            });
+        }
+        cartTotalElement.textContent = `Total Imaginary Cost: $${total.toFixed(2)}`;
+        updateCartCountDisplay();
+    }
+
+    function updateCartCountDisplay() {
+        const cart = getCart();
+        cartCountElement.textContent = `(${cart.length})`;
+    }
+
+    // Initialize cart count display on load
+    window.addEventListener('load', updateCartCountDisplay);
+
 
     // 18+ gate logic (updated to open explicit content page)
     const ageModal = document.getElementById('ageModal');
@@ -448,18 +545,15 @@
     function closeAgeGate(){ ageModal.classList.remove('open'); }
     function confirmAdult(){
       closeAgeGate();
-      // Directly open the explicit content page
       open('explicitContentPage');
-      // Hide the minor block if it was previously shown
       document.getElementById('minorBlock').style.display='none';
     }
     function denyAgeGate(){
       closeAgeGate();
       document.getElementById('minorBlock').style.display='block';
-      open('home'); // Redirects to home for minors
+      open('home');
     }
 
-    // silly easter egg (updated to use custom message box instead of alert)
     let clicks=0;
     function secret(){
       clicks++;
@@ -467,8 +561,6 @@
         showMessageBox('Developer Mode', 'Developer Mode unlocked! (There is no developer mode.)');
       }
     }
-
-    // --- Custom Message Box ---
 
     const messageBoxModal = document.getElementById('messageBoxModal');
     const messageBoxTitle = document.getElementById('messageBoxTitle');
@@ -486,81 +578,7 @@
       messageBoxModal.classList.remove('open');
       if (messageBoxCallback) {
         messageBoxCallback();
-        messageBoxCallback = null; // Clear callback after use
-      }
-    }
-
-    // --- Gemini API Integration: Product Description Generator ---
-
-    async function inventTagline(buttonElement, productName) {
-      const originalButtonText = buttonElement.textContent;
-      const originalTaglineElement = buttonElement.closest('.toy').querySelector('.tagline');
-      const originalTagline = originalTaglineElement.textContent;
-
-      buttonElement.disabled = true;
-      buttonElement.innerHTML = `Generating... <span class="loading-spinner"></span>`;
-
-      let chatHistory = [];
-      const prompt = `Generate a single, extremely absurd, comically over-the-top, and slightly nonsensical marketing tagline (1-2 sentences) for an imaginary product called '${productName}' on a parody website called 'ToysForBoys.org' that sells useless, joke tools. Make it sound like it's trying way too hard to be impressive, but is utterly pointless.`;
-      chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-      const payload = { contents: chatHistory };
-      const GEMINI_PROXY_WORKER_URL = "https://toys-for-boys-gemini-proxy.afedel.workers.dev"; // PASTE YOUR NEW WORKER URL HERE!
-const apiUrl = GEMINI_PROXY_WORKER_URL; // Your website now talks to the proxy Worker
-      
-      let retryCount = 0;
-      const maxRetries = 3;
-      const baseDelay = 1000;
-
-      while (retryCount < maxRetries) {
-        try {
-          const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-
-          if (!response.ok) {
-            if (response.status === 429) {
-              const delay = baseDelay * Math.pow(2, retryCount);
-              console.warn(`Rate limit hit. Retrying in ${delay / 1000}s...`);
-              await new Promise(res => setTimeout(res, delay));
-              retryCount++;
-              continue;
-            } else {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-          }
-
-          const result = await response.json();
-
-          if (result.candidates && result.candidates.length > 0 &&
-              result.candidates[0].content && result.candidates[0].content.parts &&
-              result.candidates[0].content.parts.length > 0) {
-            const newTagline = result.candidates[0].content.parts[0].text;
-            originalTaglineElement.textContent = newTagline;
-            break;
-          } else {
-            console.error('Gemini API response structure unexpected:', result);
-            showMessageBox('API Error', 'Could not generate a new tagline. Unexpected response from API.');
-            originalTaglineElement.textContent = originalTagline;
-            break;
-          }
-        } catch (error) {
-          console.error('Error generating tagline:', error);
-          if (retryCount < maxRetries - 1) {
-            const delay = baseDelay * Math.pow(2, retryCount);
-            console.warn(`Attempt ${retryCount + 1} failed. Retrying in ${delay / 1000}s...`);
-            await new Promise(res => setTimeout(res, delay));
-            retryCount++;
-          } else {
-            showMessageBox('API Error', 'Failed to generate a new tagline after multiple attempts. Please try again later.');
-            originalTaglineElement.textContent = originalTagline;
-            break;
-          }
-        } finally {
-          buttonElement.disabled = false;
-          buttonElement.innerHTML = originalButtonText;
-        }
+        messageBoxCallback = null;
       }
     }
 
@@ -618,90 +636,12 @@ const apiUrl = GEMINI_PROXY_WORKER_URL; // Your website now talks to the proxy W
     }
 
     window.addEventListener('load', () => {
-      const numberOfTips = Math.floor(Math.random() * 2) + 1; // Generates 1 or 2 tips
+      const numberOfTips = Math.floor(Math.random() * 2) + 1;
       for (let i = 0; i < numberOfTips; i++) {
         createStickyTip();
       }
     });
-
-    // --- "Ask the Guru" Feature for FAQ Page ---
-    const guruQuestionInput = document.getElementById('guruQuestion');
-    const guruResponseDiv = document.getElementById('guruResponse');
-
-    async function askTheGuru(buttonElement) {
-        const question = guruQuestionInput.value.trim();
-        if (!question) {
-            showMessageBox('Guru Says:', 'Even the guru needs a question to ponder. Please type something!');
-            return;
-        }
-
-        const originalButtonText = buttonElement.textContent;
-        buttonElement.disabled = true;
-        buttonElement.innerHTML = `Meditating... <span class="loading-spinner"></span>`;
-        guruResponseDiv.classList.remove('hidden');
-        guruResponseDiv.textContent = 'The Guru is pondering...';
-
-        let chatHistory = [];
-        const guruPrompt = `As a supremely enlightened, yet comically absurd and nonsensical guru on a parody website called 'ToysForBoys.org', provide a short (1-3 sentences) pseudo-philosophical, profound-sounding, but ultimately useless and humorous answer to the following question: "${question}". Make it sound like profound wisdom but for a joke.`;
-        chatHistory.push({ role: "user", parts: [{ text: guruPrompt }] });
-        const payload = { contents: chatHistory };
-        const GEMINI_PROXY_WORKER_URL = "https://toys-for-boys-gemini-proxy.afedel.workers.dev"; // PASTE YOUR NEW WORKER URL HERE!
-const apiUrl = GEMINI_PROXY_WORKER_URL; // Your website now talks to the proxy Worker
-      
-        let retryCount = 0;
-        const maxRetries = 3;
-        const baseDelay = 1000;
-
-        while (retryCount < maxRetries) {
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    if (response.status === 429) {
-                        const delay = baseDelay * Math.pow(2, retryCount);
-                        console.warn(`Guru API: Rate limit hit. Retrying in ${delay / 1000}s...`);
-                        await new Promise(res => setTimeout(res, delay));
-                        retryCount++;
-                        continue;
-                    } else {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                }
-
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    guruResponseDiv.textContent = result.candidates[0].content.parts[0].text;
-                    break;
-                } else {
-                    console.error('Guru API: Response structure unexpected:', result);
-                    guruResponseDiv.textContent = "The guru's wisdom is... currently unavailable. Try asking again, or perhaps consult a real manual.";
-                    break;
-                }
-            } catch (error) {
-                console.error('Guru API: Error generating response:', error);
-                if (retryCount < maxRetries - 1) {
-                    const delay = baseDelay * Math.pow(2, retryCount);
-                    console.warn(`Guru API: Attempt ${retryCount + 1} failed. Retrying in ${delay / 1000}s...`);
-                    await new Promise(res => setTimeout(res, delay));
-                    retryCount++;
-                } else {
-                    guruResponseDiv.textContent = "The guru is lost in thought. Or the internet is. Either way, try again later.";
-                    break;
-                }
-            } finally {
-                buttonElement.disabled = false;
-                buttonElement.innerHTML = originalButtonText;
-            }
-        }
-    }
-
+    
     // --- New 18+ Explicit Joke Content Data and Rendering ---
 
     const explicitJokeItems = [
@@ -716,7 +656,9 @@ const apiUrl = GEMINI_PROXY_WORKER_URL; // Your website now talks to the proxy W
         { icon: '🚀', name: 'Personal Thruster Pack', description: 'Experience exhilarating vertical ascension... from your couch to the fridge. Fuel is optional.', price: 'Unlimited flights of fancy' },
         { icon: '🍌', name: 'The Banana Hammock (Miniature)', description: 'A tiny hammock for your tiny, decorative bananas. Perfect for desk decor.', price: 'Small but mighty' },
         { icon: '🎈', name: 'The Inflatable Ego Booster', description: 'Just add air! Watch your self-esteem inflate, then deflate slowly over time. Reusable!', price: 'A breath of fresh air' },
-        { icon: '🧦', name: 'The Missing Sock Locator', description: 'Guaranteed to NOT find the other sock. Its purpose is to confirm the universe\'s sense of humor.', price: 'Infinite Loops of Mystery' }
+        { icon: '🧦', name: 'The Missing Sock Locator', description: 'Guaranteed to NOT find the other sock. Its purpose is to confirm the universe\'s sense of humor.', price: 'Infinite Loops of Mystery' },
+        // New explicit item
+        {icon:'🎮', name:'Controller with 3 Joysticks', description:'For the truly indecisive gamer. Experience triple the confusion and zero added functionality. Advanced frustration guaranteed!', price:'$69.42'}
     ];
 
     function renderExplicitJokeGrid() {
@@ -727,13 +669,11 @@ const apiUrl = GEMINI_PROXY_WORKER_URL; // Your website now talks to the proxy W
                 <h3>${item.name}</h3>
                 <p>${item.description}</p>
                 <p><strong>Price:</strong> ${item.price}</p>
-                <button class="btn" onclick="addToCart('${item.name.replace(/'/g, "&#39;")}')">Add to Cart (Seriously, lol)</button>
+                <button class="btn" onclick="addToCart(${JSON.stringify(item).replace(/'/g, "&#39;")})">Add to Cart</button>
             </div>
         `).join('');
     }
 
-    // Call this function when the page loads (or when the explicit section is opened)
-    // For simplicity, we'll render it on load and then toggle visibility via the router.
     window.addEventListener('load', renderExplicitJokeGrid);
 
   </script>
